@@ -252,4 +252,5 @@ A remoção usa `moverVermelhoEsquerda` / `moverVermelhoDireita` para garantir q
 ## Autor do trabalho
 
 Victor Matheus de Abreu Dantas
+
 Matrícula: 20250040208
