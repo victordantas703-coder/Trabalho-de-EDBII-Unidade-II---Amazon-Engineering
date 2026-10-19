@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.TreeMap; // usada para conferir os resultados
 import java.util.function.Supplier;
 import no.NoAVL;
 import arvores.ArvoreAVL;
