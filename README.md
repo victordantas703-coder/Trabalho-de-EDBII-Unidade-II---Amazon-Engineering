@@ -39,7 +39,7 @@ Observações sobre o terminal:
 
 ```mermaid
 treeView-beta
-            arvores-java/
+            src/
                 main/ 
                     SystemView.java 
                     Visualizador.java
@@ -71,14 +71,17 @@ treeView-beta
 ## Compilar e executar
 
 ```bash
-# 1) entrar na pasta do projeto
-cd arvores-java
+# 1) clonar projeto
+git clone https://github.com/victordantas703-coder/Trabalho-de-EDBII-Unidade-II---Amazon-Engineering.git
 
-# 2) compilar (cria a pasta "bin" com os .class)
+# 2) entrar na pasta do projeto
+cd Trabalho-de-EDBII-Unidade-II---Amazon-Engineering
+
+# 3) compilar (cria a pasta "bin" com os .class)
 mkdir -p bin
-javac -encoding UTF-8 -d bin -sourcepath main main/SystemView.java
+javac -encoding UTF-8 -d bin -sourcepath src/main src/main/SystemView.java
 
-# 3) executar o menu
+# 4) executar o menu
 java -cp bin SystemView
 ```
 
