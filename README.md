@@ -238,7 +238,11 @@ java -cp bin SystemView --testes --sem-cor
 
 ### AVL
 
-Cada nó guarda sua altura. Após inserir ou remover, a função `balancear` é aplicada em cada nó do caminho de volta até a raiz: calcula `fb = h(esq) − h(dir)` e, se `|fb| > 1`, aplica rotação simples (casos esquerda-esquerda e direita-direita) ou dupla (esquerda-direita e direita-esquerda).
+Cada nó calcula a sua altura e seu fator de balanceamento.
+
+Após inserir ou remover, a função `balancear` é aplicada em cada nó do caminho de volta até a raiz.
+
+Calcula-se `fb = h(esq) − h(dir)` e, se `|fb| > 1`, aplica rotação simples (casos esquerda-esquerda e direita-direita) ou dupla (esquerda-direita e direita-esquerda).
 
 ### Rubro-Negra (LLRB)
 
@@ -250,7 +254,7 @@ A inserção coloca um nó vermelho e, na volta da recursão, aplica três corre
 2. filho esquerdo vermelho com neto esquerdo vermelho → **rotação à direita**;
 3. os dois filhos vermelhos → **inversão de cores**.
 
-A remoção usa `moverVermelhoEsquerda` / `moverVermelhoDireita` para garantir que o nó por onde se desce tenha um vermelho "emprestado" (como em uma árvore 2-3, onde remover de um nó 2 exige emprestar ou fundir) e usa as mesmas três correções na subida.
+A remoção usa `moverVermelhoEsquerda` / `moverVermelhoDireita` para garantir que o nó por onde se desce tenha um vermelho "emprestado".
 
 ## Autor do trabalho
 
