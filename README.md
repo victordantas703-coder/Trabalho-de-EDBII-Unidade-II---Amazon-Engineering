@@ -27,7 +27,7 @@ Trabalho de implementação e análise de árvores balanceadas AVL e Rubro-Negra
 
 | Item | Requisito |
 |------|-----------|
-| Java | JDK 11 ou superior (testado com JDK 27) |
+| **Java** | **JDK 11 ou superior (testado com JDK 27)** |
 | Bibliotecas externas | Só a biblioteca padrão do Java (`java.util`, `java.io`) |
 | Terminal | Com suporte a UTF-8 e a cores ANSI de 256 cores |
 
@@ -71,11 +71,33 @@ treeView-beta
 
 ## Execução do projeto
 
-### Executável .jar
+### Opção 1 - Executável .jar
 
+```bash
+# 1) clonar projeto
+git clone https://github.com/victordantas703-coder/Trabalho-de-EDBII-Unidade-II---Amazon-Engineering.git
 
+# 2) entrar na pasta do projeto
+cd Trabalho-de-EDBII-Unidade-II---Amazon-Engineering
 
-### Compilar e executar
+# 3) executar o .jar
+java -jar sistema-arvores.jar
+```
+
+### Opção 2 - Executar através da bin
+
+```bash
+# 1) clonar projeto
+git clone https://github.com/victordantas703-coder/Trabalho-de-EDBII-Unidade-II---Amazon-Engineering.git
+
+# 2) entrar na pasta do projeto
+cd Trabalho-de-EDBII-Unidade-II---Amazon-Engineering
+
+# 3) executar o menu
+java -cp bin SystemView
+```
+
+### Opção 3 - Compilar e executar
 
 ```bash
 # 1) clonar projeto
