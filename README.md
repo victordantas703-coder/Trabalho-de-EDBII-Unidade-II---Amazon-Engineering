@@ -8,11 +8,12 @@
 - [Introdução](#introdução)
 - [Dependências](#dependências)
 - [Estrutura dos arquivos](#estrutura-dos-arquivos)
-- [Compilar e executar](#compilar-e-executar)
+- [Execução do projeto](#compilar-e-executar)
 - [Funcionalidades implementadas](#funcionalidades-implementadas)
 - [Exemplo de uso](#exemplo-de-uso)
 - [Comentários sobre o funcionamento](#comentários-sobre-o-funcionamento)
 - [Autor do trabalho](#autor-do-trabalho)
+- [Referências Bibliográficas](#referências-bibliográficas)
 
 ---
 
@@ -68,7 +69,13 @@ treeView-beta
 | `main/arvores/ArvoreRubroNegra.java` | `ArvoreRubroNegra extends Arvore` |
 | `main/arvores/Renderizador.java` | Interface pequena que liga as árvores ao `Visualizador` |
 
-## Compilar e executar
+## Execução do projeto
+
+### Executável .jar
+
+
+
+### Compilar e executar
 
 ```bash
 # 1) clonar projeto
@@ -231,7 +238,7 @@ Calcula-se `fb = h(esq) − h(dir)` e, se `|fb| > 1`, aplica rotação simples (
 
 ### Rubro-Negra (LLRB)
 
-Variação de caída para a esquerda e equivalente a uma árvore 2-3.
+Variação de caída para a esquerda e equivalente a uma árvore 2-3. Auditada por Robert Sedgewick [3].
 
 A inserção coloca um nó vermelho e, na volta da recursão, aplica três correções em sequência:
 
@@ -246,3 +253,13 @@ A remoção usa `moverVermelhoEsquerda` / `moverVermelhoDireita` para garantir q
 Victor Matheus de Abreu Dantas
 
 Matrícula: 20250040208
+
+## Referências Bibliográficas
+
+[1] Colombo, D. A.; Oliani Junior, S. Conceitos Importantes de Estrutura de Árvores: binárias e binária balanceada (AVL). Interface Tecnológica, v. 20, n. 1, 2023.
+
+[2] Black, P. E. AVL tree. Dictionary of Algorithms and Data Structures, National Institute of Standards and Technology (NIST), 2019.
+
+[3] Sedgewick, R. Left-leaning Red-Black Trees. Department of Computer Science, Princeton University, 2008.
+
+[4] Fleury, P. O Sistema de Processamento de Pedidos e a Gestão do Ciclo do Pedido. ILOS: Especialistas em Logística e Supply Chain, 2003.
