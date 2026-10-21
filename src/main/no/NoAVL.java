@@ -38,6 +38,6 @@ public class NoAVL extends No<NoAVL> {
 
     @Override
     public String legenda(boolean comCor) {
-        return "Cada nó mostra o valor (×n = n repetições). Verde mais claro = nível mais profundo.";
+        return "Cada nó mostra o valor. Verde mais claro = nível mais profundo.";
     }
 }

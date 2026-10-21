@@ -9,7 +9,6 @@ public abstract class Arvore {
     protected long rotacoes;
     protected long ajustesBalanceamento;
     protected int quantidadeNos;
-    protected int quantidadeElementos; // difenrete da quantidade nós, esse conta com as repetições
     protected String erroVerificacao;
 
 
@@ -36,7 +35,6 @@ public abstract class Arvore {
     public abstract boolean remover(int valor);
     public abstract boolean buscar(int valor);
 
-    public abstract int ocorrencias(int valor);
     public abstract List<Integer> emOrdem();
     public abstract void imprimir();
     public abstract int altura();
@@ -58,9 +56,8 @@ public abstract class Arvore {
     public long getRotacoes() { return rotacoes; }
     public long getAjustesBalanceamento() { return ajustesBalanceamento; }
     public int getQuantidadeNos() { return quantidadeNos; }
-    public int getQuantidadeElementos() { return quantidadeElementos; }
     public String getErroVerificacao() { return erroVerificacao; }
-    public boolean estaVazia() { return quantidadeElementos == 0; }
+    public boolean estaVazia() { return quantidadeNos == 0; }
 
     public void resetarContadores() {
         rotacoes = 0;

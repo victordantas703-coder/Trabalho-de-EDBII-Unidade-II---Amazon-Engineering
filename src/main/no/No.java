@@ -3,7 +3,6 @@ package no;
 public abstract class No<T extends No<T>> {
 
     public int valor;
-    public int contagem = 1;   // quantidade de ocorrências de um valor (permite valores repetidos)
     public T esquerda;
     public T direita;
 
@@ -12,7 +11,6 @@ public abstract class No<T extends No<T>> {
     }
 
     public int getValor()    { return valor; }
-    public int getContagem() { return contagem; }
     public T getEsquerda()   { return esquerda; }
     public T getDireita()    { return direita; }
 
@@ -24,9 +22,9 @@ public abstract class No<T extends No<T>> {
         return (esquerda != null ? 1 : 0) + (direita != null ? 1 : 0);
     }
 
-    /** Texto base do nó: "7" ou "7×3" quando há repetições. */
+    /** Texto base do nó: o próprio valor. */
     protected String rotuloBase() {
-        return contagem > 1 ? valor + "×" + contagem : String.valueOf(valor);
+        return String.valueOf(valor);
     }
 
     /**

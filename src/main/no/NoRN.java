@@ -32,9 +32,8 @@ public class NoRN extends No<NoRN> {
     @Override
     public String legenda(boolean comCor) {
         if (comCor) {
-            return ESTILO_VERMELHO + " vermelho " + RESET + "  " + ESTILO_PRETO + " preto " + RESET
-                    + "   (×n = n repetições do valor)";
+            return ESTILO_VERMELHO + " vermelho " + RESET + "  " + ESTILO_PRETO + " preto " + RESET;
         }
-        return "(7) = nó vermelho   [7] = nó preto   (×n = n repetições do valor)";
+        return "(7) = nó vermelho   [7] = nó preto";
     }
 }

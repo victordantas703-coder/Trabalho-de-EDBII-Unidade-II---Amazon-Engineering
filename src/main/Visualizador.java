@@ -81,7 +81,7 @@ public final class Visualizador {
         Item r = v.construir(raiz, 0);
 
         if (v.emOrdem.size() > LIMITE_NOS) {
-            System.out.println("    Árvore com " + v.emOrdem.size() + " nós distintos: grande demais para ser desenhada"
+            System.out.println("    Árvore com " + v.emOrdem.size() + " nós: grande demais para ser desenhada"
                     + " (limite " + LIMITE_NOS + ").");
         } else {
             int slot = 0;

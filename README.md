@@ -10,7 +10,7 @@
 - [Estrutura dos arquivos](#estrutura-dos-arquivos)
 - [Compilar e executar](#compilar-e-executar)
 - [Funcionalidades implementadas](#funcionalidades-implementadas)
-- [Exemplos de uso](#exemplos-de-uso)
+- [Exemplo de uso](#exemplo-de-uso)
 - [Comentários sobre o funcionamento](#comentários-sobre-o-funcionamento)
 - [Autor do trabalho](#autor-do-trabalho)
 
@@ -60,7 +60,7 @@ treeView-beta
 |---------|-------|
 | `main/SystemView.java` | main, menu, modo interativo, testes e medição de tempos |
 | `main/Visualizador.java` | Desenho da árvore no terminal (estilo bonsai, clássico ou lateral) |
-| `main/no/No.java` | Classe abstrata `No<T>`: valor, contador de repetições e filhos |
+| `main/no/No.java` | Classe abstrata `No<T>`: valor e filhos |
 | `main/no/NoAVL.java` | `NoAVL extends No`: acrescenta a altura do nó |
 | `main/no/NoRN.java` | `NoRN extends No`: acrescenta a cor (vermelho/preto) |
 | `main/arvores/Arvore.java` | Classe abstrata `Arvore`: declara as operações abstratas (inserir, remover, buscar, em ordem, imprimir...) e guarda os contadores de altura final, rotações e ajustes de balanceamento |
@@ -92,7 +92,7 @@ java -cp bin SystemView
 | `--testes` | Roda a bateria de testes e o comparativo de desempenho. O código de saída é `0` se tudo passou e `1` se algum teste falhou |
 | `--n=VALOR` | Tamanho dos conjuntos do comparativo (padrão: `100000`) |
 | `--sem-cor` | Desliga as cores. Na rubro-negra, `(7)` = nó vermelho e `[7]` = nó preto |
-| `--bonsai` / `--classica` | Escolhe o estilo do desenho na inicialização do progrma |
+| `--bonsai` / `--classica` | Escolhe o estilo do desenho na inicialização do programa |
 | `--largura=N` | Largura do terminal em colunas (por padrão é detectada) |
 | `--ajuda` | Lista as opções dessa tabela |
 
@@ -101,10 +101,10 @@ java -cp bin SystemView
 ### Árvores (AVL e Rubro-Negra)
 
 * **Escolha em tempo de execução** da árvore (AVL ou Rubro-Negra) no menu.
-* **Inserção** (com suporte a valores repetidos).
-* **Remoção** de uma ocorrência (nós folha, com um filho e com dois filhos).
-* **Busca** (`buscar` devolve `true/false`, `ocorrencias` devolve quantas vezes o valor foi inserido).
-* **Percurso em ordem** (valores em ordem crescente, com as repetições).
+* **Inserção** de elementos na árvore.
+* **Remoção** de um elemento da árvore.
+* **Busca**: `buscar` devolve `true/false`.
+* **Percurso em ordem**: valores em ordem crescente.
 * **Visualização**: na rubro-negra as cores dos nós são exibidas.
 * **Verificação das propriedades** (`verificarPropriedades()`, usada pelos testes automáticos e pelo comparativo):
   * AVL: ordem de BST, `|fator de balanceamento| ≤ 1` em todo nó e altura armazenada correta;
@@ -139,20 +139,19 @@ Executados nas duas árvores com os mesmos conjuntos de dados e as mesmas sequê
 | Remoção de elementos inexistentes | devolve `false`, árvore e contadores permanecem iguais |
 | Árvore com um elemento / árvore vazia | inserir, buscar, remover, reutilizar, visualizar |
 | Propriedades após inserções e remoções | 6000 operações aleatórias intercaladas, conferidas uma a uma, esvaziar 2000 nós |
-| Valores repetidos | contagem, remoção decrementando, estrutura inalterada ao duplicar tudo |
 | Comparação entre as estruturas | 20 000 operações aleatórias idênticas: respostas e conteúdo final iguais |
 
 ### Medição de tempo
 
-O comparativo usa 4 conjuntos: crescente, decrescente, aleatório e aleatório com repetições.
+O comparativo usa 3 conjuntos: crescente, decrescente e aleatório.
 
 Para cada um, as duas árvores recebem a mesma sequência de inserções, buscas (metade de valores existentes, metade inexistentes) e remoções (metade dos elementos, em ordem aleatória).
 
 Os tempos são medidos com `System.nanoTime()` e a JVM é aquecida antes da medição.
 
-## Exemplos de uso
+## Exemplo de uso
 
-### Sessão interativa (Rubro-Negra, sem cores)
+### Sessão interativa
 
 ```
 Escolha (Padrão: 1): 1           (estilo bonsai)
@@ -162,51 +161,37 @@ Escolha: 1                       (Inserir)
   Valor(es) a inserir (separados por espaço): 10 20 30 40 50 25 25
   + 10 inserido
   ...
-  + 25 já existia: repetição registrada (agora ×2)
-  7 inserção(ões) em 92,33 µs
+  + 25 inserido
+  ! 25 já existe na árvore: inserção impedida
+  6 inserção(ões) em 72,09 µs
 
   Árvore Rubro-Negra
-              (25×2)
-                 └──────┐
- [10]                 [30]
-   └──────┬─────────────┘
-        (20)                        [50]
-          └────────────────────┬──────┘
-                             [40]
-                               ┃
-                               ┃
-                     ╭─────────┴─────────╮
-                      ╲                 ╱
-                       ╲_______________╱
-  (7) = nó vermelho   [7] = nó preto   (×n = n repetições do valor)
+          (25)  
+            └────┐  
+[10]           [30]  
+  └────┬─────────┘  
+     (20)                [50]  
+       └──────────────┬────┘  
+                    [40]  
+                      ┃  
+                      ┃  
+            ╭─────────┴─────────╮  
+             ╲                 ╱  
+              ╲_______________╱  
+  (7) = nó vermelho   [7] = nó preto  
 
 Escolha: 2    (Remover: 20 999)
-  - 20 removido (uma ocorrência)
+  - 20 removido
   ! 999 não existe na árvore: nada foi alterado
 
   (exibição da arvore)
 
 Escolha: 3    (Buscar: 25 7)
-  > 25 encontrado (2 ocorrência(s)) em 4,55 µs
-  ! 7 não encontrado (1,86 µs)
+  > 25 encontrado em 1,53 µs
+  ! 7 não encontrado (671 ns)
 
 Escolha: 4    (Percurso em ordem)
-  Em ordem (6 elementos): [10, 25, 25, 30, 40, 50]
-```
-
-### AVL com a mesma sequência (inclui repetições)
-
-Sequência `8 3 10 1 6 14 4 7 13 6 6 1` (a AVL fica com raiz 8; a rubro-negra, com raiz 6):
-
-```
-  Árvore AVL
-          4       7
-          └───┬───┘
- 1×2         6×3         10      14
-  └───┬───────┘           └───┬───┘
-      3                      13
-      └───────────────┬───────┘
-                      8
+  Em ordem (5 elementos): [10, 25, 30, 40, 50]
 ```
 
 ### Testes e comparativo
@@ -219,15 +204,15 @@ java -cp bin SystemView --testes --sem-cor
   > Propriedades e percurso em ordem corretos após cada inserção
   > Altura final 10 ≤ limite teórico 14
   ...
-  Aprovados: 93   Reprovados: 0
+  Aprovados: 75   Reprovados: 0
 
-  >> Conjunto: Aleatório (sem repetição)   (100000 inserções, 200000 buscas [metade inexistentes], 50000 remoções)
+  >> Conjunto: Aleatório   (100000 inserções, 200000 buscas [metade inexistentes], 50000 remoções)
                                                     AVL      Rubro-Negra
-    Tempo de inserção (ms)                       37,748           33,859
-    Tempo de busca (ms)                          22,455           27,223
-    Tempo de remoção (ms)                        21,912           37,400
+    Tempo de inserção (ms)                       51,895           32,339
+    Tempo de busca (ms)                          20,744           25,670
+    Tempo de remoção (ms)                        21,901           39,564
     Altura após as inserções                         20               24
-    Altura após as remoções                          19               22
+    Altura após as remoções                          19               21
     Rotações nas inserções                        69920           118191
     ...
 ```

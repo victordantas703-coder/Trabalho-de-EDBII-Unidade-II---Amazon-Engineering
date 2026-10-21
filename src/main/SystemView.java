@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.TreeMap; // usada para conferir os resultados
+import java.util.TreeSet; // usada para conferir os resultados
 import java.util.function.Supplier;
 import no.NoAVL;
 import arvores.ArvoreAVL;
@@ -224,7 +224,7 @@ public class SystemView {
 
         while (true) {
             titulo("Modo interativo: " + arvore.getNome()
-                    + "  (" + arvore.getQuantidadeNos() + " nós, " + arvore.getQuantidadeElementos() + " elementos)");
+                    + "  (" + arvore.getQuantidadeNos() + " nós)");
             System.out.println("   1) Inserir valor(es)            5) Visualizar a árvore");
             System.out.println("   2) Remover valor(es)            6) Estatísticas e tempos");
             System.out.println("   3) Buscar valor                 7) Inserir N valores aleatórios");
@@ -263,18 +263,21 @@ public class SystemView {
         List<Integer> valores = lerValores("  Valor(es) a inserir (separados por espaço): ");
         if (valores.isEmpty()) return;
         long total = 0;
+        int inseridos = 0;
         for (int v : valores) {
             long t0 = System.nanoTime();
-            boolean novo = arvore.inserir(v);
+            boolean inserido = arvore.inserir(v);
             long dur = System.nanoTime() - t0;
+            if (!inserido) {
+                System.out.println("  ! " + v + " já existe na árvore: inserção impedida");
+                continue;
+            }
             m.somar(0, dur);
             total += dur;
-            if (valores.size() <= 12) {
-                System.out.println(novo ? "  + " + v + " inserido"
-                        : "  + " + v + " já existia: repetição registrada (agora ×" + arvore.ocorrencias(v) + ")");
-            }
+            inseridos++;
+            if (valores.size() <= 12) System.out.println("  + " + v + " inserido");
         }
-        System.out.println("  " + valores.size() + " inserção(ões) em " + formatarTempo(total));
+        System.out.println("  " + inseridos + " inserção(ões) em " + formatarTempo(total));
         arvore.imprimir();
     }
 
@@ -289,7 +292,7 @@ public class SystemView {
             m.somar(2, dur);
             total += dur;
             if (valores.size() <= 12) {
-                System.out.println(ok ? "  - " + v + " removido (uma ocorrência)"
+                System.out.println(ok ? "  - " + v + " removido"
                         : "  ! " + v + " não existe na árvore: nada foi alterado");
             }
         }
@@ -305,7 +308,7 @@ public class SystemView {
             long dur = System.nanoTime() - t0;
             m.somar(1, dur);
             System.out.println(achou
-                    ? "  > " + v + " encontrado (" + arvore.ocorrencias(v) + " ocorrência(s)) em " + formatarTempo(dur)
+                    ? "  > " + v + " encontrado em " + formatarTempo(dur)
                     : "  ! " + v + " não encontrado (" + formatarTempo(dur) + ")");
         }
     }
@@ -315,22 +318,27 @@ public class SystemView {
         int max = lerInteiro("  Valor máximo (Padrão: 99): ", 99, 1, 100_000_000);
         Random r = new Random();
         long total = 0;
+        int inseridos = 0;
         for (int i = 0; i < n; i++) {
             int v = 1 + r.nextInt(max);
             long t0 = System.nanoTime();
-            arvore.inserir(v);
+            boolean inserido = arvore.inserir(v);
             long dur = System.nanoTime() - t0;
+            if (!inserido) continue;
             m.somar(0, dur);
             total += dur;
+            inseridos++;
         }
-        System.out.println("  " + n + " inserções aleatórias em " + formatarTempo(total));
+        System.out.println("  " + inseridos + " inserções aleatórias em " + formatarTempo(total));
+        if (inseridos < n) {
+            System.out.println("  ! " + (n - inseridos) + " valor(es) sorteado(s) já existia(m) na árvore: inserção impedida");
+        }
         arvore.imprimir();
     }
 
     private static void estatisticas(Arvore arvore, Metricas m) {
         System.out.println("  ── " + arvore.getNome() + " ──");
-        System.out.println("  Nós distintos .............. " + arvore.getQuantidadeNos());
-        System.out.println("  Elementos (com repetições) . " + arvore.getQuantidadeElementos());
+        System.out.println("  Nós ........................ " + arvore.getQuantidadeNos());
         System.out.println("  Altura final ............... " + arvore.getAlturaFinal()
                 + "  (limite teórico para esta quantidade de nós: " + arvore.limiteTeoricoAltura() + ")");
         System.out.println("  Rotações ................... " + arvore.getRotacoes());
@@ -360,30 +368,21 @@ public class SystemView {
         verificar(erro == null ? descricao : descricao + "  - " + erro, erro == null);
     }
 
-    /** Estrutura de referência (multiconjunto da biblioteca padrão) usada só para conferir os resultados. */
+    /** Estrutura de referência (conjunto da biblioteca padrão) usada só para conferir os resultados. */
     private static final class Referencia {
-        private final TreeMap<Integer, Integer> mapa = new TreeMap<>();
-        void inserir(int v) { mapa.merge(v, 1, Integer::sum); }
-        boolean remover(int v) {
-            Integer c = mapa.get(v);
-            if (c == null) return false;
-            if (c == 1) mapa.remove(v); else mapa.put(v, c - 1);
-            return true;
-        }
-        int ocorrencias(int v) { return mapa.getOrDefault(v, 0); }
-        int distintos() { return mapa.size(); }
-        List<Integer> lista() {
-            List<Integer> l = new ArrayList<>();
-            mapa.forEach((v, c) -> { for (int i = 0; i < c; i++) l.add(v); });
-            return l;
-        }
+        private final TreeSet<Integer> conjunto = new TreeSet<>();
+        void inserir(int v) { conjunto.add(v); }
+        boolean remover(int v) { return conjunto.remove(v); }
+        boolean contem(int v) { return conjunto.contains(v); }
+        int tamanho() { return conjunto.size(); }
+        List<Integer> lista() { return new ArrayList<>(conjunto); }
     }
 
     /** Confere a árvore contra a referência. Devolve null se tudo bem, ou a descrição do problema. */
     private static String estadoConsistente(Arvore t, Referencia ref) {
         if (!t.verificarPropriedades()) return "propriedade violada: " + t.getErroVerificacao();
         if (!t.emOrdem().equals(ref.lista())) return "percurso em ordem diferente do esperado";
-        if (t.getQuantidadeNos() != ref.distintos()) return "quantidade de nós incorreta";
+        if (t.getQuantidadeNos() != ref.tamanho()) return "quantidade de nós incorreta";
         int h = t.altura();
         if (h > t.limiteTeoricoAltura()) return "altura " + h + " acima do limite teórico " + t.limiteTeoricoAltura();
         return null;
@@ -411,7 +410,6 @@ public class SystemView {
             testeRemocaoInexistente(f);
             testeUmElemento(f);
             testeArvoreVazia(f);
-            testeRepetidos(f);
             testeOperacoesMistas(f);
             testeRemocaoTotal(f);
         }
@@ -532,35 +530,8 @@ public class SystemView {
         t.imprimir();
     }
 
-    private static void testeRepetidos(Supplier<Arvore> f) {
-        System.out.println("\n [Inserção de valores repetidos]");
-        Arvore t = f.get();
-        boolean novo5 = t.inserir(5);
-        boolean rep5 = t.inserir(5);
-        t.inserir(5); t.inserir(3); t.inserir(3); t.inserir(8);
-        verificar("Primeira inserção cria nó, repetição não (" + novo5 + "/" + rep5 + ")", novo5 && !rep5);
-        verificar("ocorrencias(5)=3, ocorrencias(3)=2, ocorrencias(8)=1",
-                t.ocorrencias(5) == 3 && t.ocorrencias(3) == 2 && t.ocorrencias(8) == 1);
-        verificar("3 nós distintos e 6 elementos", t.getQuantidadeNos() == 3 && t.getQuantidadeElementos() == 6);
-        verificar("Percurso em ordem mostra as repetições " + t.emOrdem(),
-                t.emOrdem().equals(List.of(3, 3, 5, 5, 5, 8)));
-        t.remover(5);
-        verificar("Remover decrementa a contagem (5 passa a ×2) e a árvore segue válida",
-                t.ocorrencias(5) == 2 && t.buscar(5) && t.verificarPropriedades());
-        t.remover(5); t.remover(5);
-        verificar("Após remover todas as ocorrências, 5 deixa de existir", !t.buscar(5) && t.getQuantidadeNos() == 2);
-        verificar("Remover o 5 de novo devolve false", !t.remover(5));
-
-        Arvore distintos = f.get(), duplicados = f.get();
-        for (int v = 100; v >= 1; v--) { distintos.inserir(v); duplicados.inserir(v); duplicados.inserir(v); }
-        verificar("Duplicar todos os valores não muda a estrutura (altura " + duplicados.altura() + " = " + distintos.altura() + ")",
-                duplicados.altura() == distintos.altura() && duplicados.getRotacoes() == distintos.getRotacoes());
-        verificar("Árvore com 200 elementos / 100 nós válida", duplicados.verificarPropriedades()
-                && duplicados.getQuantidadeElementos() == 200 && duplicados.getQuantidadeNos() == 100);
-    }
-
     private static void testeOperacoesMistas(Supplier<Arvore> f) {
-        System.out.println("\n [Propriedades após inserções e remoções intercaladas (aleatórias, com repetições)]");
+        System.out.println("\n [Propriedades após inserções e remoções intercaladas (aleatórias)]");
         Arvore t = f.get();
         Referencia ref = new Referencia();
         Random r = new Random(2024);
@@ -569,12 +540,14 @@ public class SystemView {
         for (int i = 0; i < 6000 && erro == null; i++) {
             int v = r.nextInt(150);
             if (r.nextInt(100) < 55) {
-                t.inserir(v);
-                ref.inserir(v);
+                if (!ref.contem(v)) {
+                    t.inserir(v);
+                    ref.inserir(v);
+                }
             } else {
                 respostasOk &= t.remover(v) == ref.remover(v);
             }
-            respostasOk &= t.buscar(v) == (ref.ocorrencias(v) > 0);
+            respostasOk &= t.buscar(v) == ref.contem(v);
             erro = estadoConsistente(t, ref);
             if (erro != null) erro = "operação " + i + ": " + erro;
         }
@@ -611,13 +584,13 @@ public class SystemView {
         for (int i = 0; i < 20_000; i++) {
             int v = r.nextInt(500);
             switch (r.nextInt(3)) {
-                case 0: avl.inserir(v); rn.inserir(v); break;
+                case 0: if (!avl.buscar(v)) { avl.inserir(v); rn.inserir(v); } break;
                 case 1: mesmasRespostas &= avl.remover(v) == rn.remover(v); break;
                 default: mesmasRespostas &= avl.buscar(v) == rn.buscar(v);
             }
         }
         verificar("As duas árvores responderam igual a todas as remoções/buscas", mesmasRespostas);
-        verificar("Percurso em ordem idêntico (" + avl.getQuantidadeElementos() + " elementos)", avl.emOrdem().equals(rn.emOrdem()));
+        verificar("Percurso em ordem idêntico (" + avl.getQuantidadeNos() + " elementos)", avl.emOrdem().equals(rn.emOrdem()));
         verificar("Ambas com propriedades válidas", avl.verificarPropriedades() && rn.verificarPropriedades());
         System.out.println("  AVL: altura " + avl.getAlturaFinal() + ", rotações " + avl.getRotacoes()
                 + ", ajustes " + avl.getAjustesBalanceamento());
@@ -626,8 +599,8 @@ public class SystemView {
     }
 
     private static void testeVisualizacao() {
-        titulo("VISUALIZAÇÃO: mesma sequência com repetições nas duas árvores");
-        int[] seq = {8, 3, 10, 1, 6, 14, 4, 7, 13, 6, 6, 1};
+        titulo("VISUALIZAÇÃO: mesma sequência nas duas árvores");
+        int[] seq = {8, 3, 10, 1, 6, 14, 4, 7, 13};
         System.out.println("  Sequência inserida: " + java.util.Arrays.toString(seq));
         for (Supplier<Arvore> f : FABRICAS) {
             Arvore t = f.get();
@@ -678,16 +651,13 @@ public class SystemView {
 
     private static List<Conjunto> criarConjuntos(int n, long semente) {
         Random r = new Random(semente);
-        int[] cresc = new int[n], decresc = new int[n], aleat = new int[n], repet = new int[n];
+        int[] cresc = new int[n], decresc = new int[n], aleat = new int[n];
         for (int i = 0; i < n; i++) { cresc[i] = i; decresc[i] = n - 1 - i; aleat[i] = i; }
         Conjunto.embaralhar(aleat, r);
-        int faixa = Math.max(1, n / 4);
-        for (int i = 0; i < n; i++) repet[i] = r.nextInt(faixa); // ~4 repetições por valor
         return List.of(
                 new Conjunto("Crescente", cresc, r),
                 new Conjunto("Decrescente", decresc, r),
-                new Conjunto("Aleatório (sem repetição)", aleat, r),
-                new Conjunto("Aleatório com repetições", repet, r));
+                new Conjunto("Aleatório", aleat, r));
     }
 
     private static Resultado medir(Supplier<Arvore> fabrica, Conjunto c) {

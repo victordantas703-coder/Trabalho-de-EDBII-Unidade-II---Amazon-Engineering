@@ -24,7 +24,6 @@ public class ArvoreRubroNegra extends Arvore {
 
         raiz = inserir(raiz, valor);
         raiz.cor = NoRN.PRETO;
-        quantidadeElementos++;
 
         if (novoNoCriado)
             quantidadeNos++;
@@ -42,8 +41,7 @@ public class ArvoreRubroNegra extends Arvore {
         } else if (valor > h.valor) {
             h.direita = inserir(h.direita, valor);
         } else {
-            h.contagem++; // valor repetido, só conta
-            return h;
+            return h; // já exite, inserção impedida
         }
         return corrigir(h);
     }
@@ -68,27 +66,13 @@ public class ArvoreRubroNegra extends Arvore {
 
     @Override
     public boolean remover(int valor) {
-        NoRN alvo = localizar(valor);
-        if (alvo == null) return false;
+        if (localizar(valor) == null) return false;   // inexistente
 
-        quantidadeElementos--;
-        if (alvo.contagem > 1) { // havia valor repetido, só decrementa
-            alvo.contagem--;
-            return true;
-        }
-
-        // Se os dois filhos da raiz são pretos, pinta a raiz de vermelho para que
-        // o algoritmo possa "emprestar" vermelho para baixo.
-        if (!vermelho(raiz.esquerda) && !vermelho(raiz.direita))
-            raiz.cor = NoRN.VERMELHO;
-        
+        // Se os dois filhos da raiz são pretos, pinta a raiz de vermelho para que o algoritmo possa "emprestar" vermelho para baixo.
+        if (!vermelho(raiz.esquerda) && !vermelho(raiz.direita)) raiz.cor = NoRN.VERMELHO;
         raiz = removerNo(raiz, valor);
-
-        if (raiz != null)
-            raiz.cor = NoRN.PRETO;
-
+        if (raiz != null) raiz.cor = NoRN.PRETO;
         quantidadeNos--;
-
         return true;
     }
 
@@ -110,10 +94,9 @@ public class ArvoreRubroNegra extends Arvore {
                 h = moverVermelhoDireita(h);
             }
             if (valor == h.valor) {
-                // 2 filhos: sucessor em ordem assume valor e contagem
+                // 2 filhos: sucessor em ordem assume valor
                 NoRN sucessor = minimo(h.direita);
                 h.valor = sucessor.valor;
-                h.contagem = sucessor.contagem;
                 h.direita = removerMinimo(h.direita);
             } else {
                 h.direita = removerNo(h.direita, valor);
@@ -179,12 +162,6 @@ public class ArvoreRubroNegra extends Arvore {
     }
 
     @Override
-    public int ocorrencias(int valor) {
-        NoRN no = localizar(valor);
-        return no == null ? 0 : no.contagem;
-    }
-
-    @Override
     public int configuracaoFilhos(int valor) {
         NoRN no = localizar(valor);
         return no == null ? -1 : no.quantidadeFilhos();
@@ -218,7 +195,7 @@ public class ArvoreRubroNegra extends Arvore {
 
     @Override
     public List<Integer> emOrdem() {
-        List<Integer> saida = new ArrayList<>(quantidadeElementos);
+        List<Integer> saida = new ArrayList<>(quantidadeNos);
         emOrdem(raiz, saida);
         return saida;
     }
@@ -226,8 +203,7 @@ public class ArvoreRubroNegra extends Arvore {
     private void emOrdem(NoRN no, List<Integer> saida) {
         if (no == null) return;
         emOrdem(no.esquerda, saida);
-        for (int i = 0; i < no.contagem; i++)
-            saida.add(no.valor);
+        saida.add(no.valor);
         emOrdem(no.direita, saida);
     }
 
@@ -254,8 +230,8 @@ public class ArvoreRubroNegra extends Arvore {
             return false;
         }
         if (verificar(raiz, Long.MIN_VALUE, Long.MAX_VALUE) < 0) return false;
-        if (emOrdem().size() != quantidadeElementos) {
-            falha("Contador de elementos inconsistente com o percurso em ordem");
+        if (emOrdem().size() != quantidadeNos) {
+            falha("Contador de nós inconsistente com o percurso em ordem");
             return false;
         }
         return true;
@@ -265,8 +241,6 @@ public class ArvoreRubroNegra extends Arvore {
         if (no == null) return 0;
         if (no.valor <= min || no.valor >= max)
             return falha("Ordem de BST violada no nó " + no.valor);
-        if (no.contagem < 1)
-            return falha("Nó " + no.valor + " com contagem inválida");
         if (vermelho(no.direita))
             return falha("Ligação vermelha pendendo para a direita no nó " + no.valor);
         if (vermelho(no) && vermelho(no.esquerda))
@@ -294,6 +268,5 @@ public class ArvoreRubroNegra extends Arvore {
     public void limpar() {
         raiz = null;
         quantidadeNos = 0;
-        quantidadeElementos = 0;
     }
 }

@@ -17,10 +17,7 @@ public class ArvoreAVL extends Arvore {
     @Override
     public boolean inserir(int valor) {
         novoNoCriado = false;
-
         raiz = inserir(raiz, valor);
-        quantidadeElementos++;
-
         if (novoNoCriado) quantidadeNos++;
         return novoNoCriado;
     }
@@ -35,22 +32,14 @@ public class ArvoreAVL extends Arvore {
         } else if (valor > no.valor) {
             no.direita = inserir(no.direita, valor);
         } else {
-            no.contagem++; // valor repetido, só conta
-            return no;
+            return no; // já existe, inserção impedida
         }
         return balancear(no);
     }
 
     @Override
     public boolean remover(int valor) {
-        NoAVL alvo = localizar(valor);
-        if (alvo == null) return false;
-
-        quantidadeElementos--;
-        if (alvo.contagem > 1) { 
-            alvo.contagem--; // há repetição, só decrementa
-            return true;
-        }
+        if (localizar(valor) == null) return false;   // inexistente
 
         raiz = removerNo(raiz, valor);
         quantidadeNos--;
@@ -63,14 +52,10 @@ public class ArvoreAVL extends Arvore {
         } else if (valor > no.valor) {
             no.direita = removerNo(no.direita, valor);
         } else {
-            if (no.esquerda == null)
-                return no.direita;
-            if (no.direita == null)
-                return no.esquerda;
-
+            if (no.esquerda == null) return no.direita;
+            if (no.direita == null) return no.esquerda;
             NoAVL sucessor = minimo(no.direita);
             no.valor = sucessor.valor;
-            no.contagem = sucessor.contagem;
             no.direita = removerMinimo(no.direita);
         }
         return balancear(no);
@@ -105,12 +90,6 @@ public class ArvoreAVL extends Arvore {
     @Override
     public boolean buscar(int valor) {
         return localizar(valor) != null;
-    }
-
-    @Override
-    public int ocorrencias(int valor) {
-        NoAVL no = localizar(valor);
-        return no == null ? 0 : no.contagem;
     }
 
     @Override
@@ -163,7 +142,7 @@ public class ArvoreAVL extends Arvore {
 
     @Override
     public List<Integer> emOrdem() {
-        List<Integer> saida = new ArrayList<>(quantidadeElementos);
+        List<Integer> saida = new ArrayList<>(quantidadeNos);
         emOrdem(raiz, saida);
         return saida;
     }
@@ -171,8 +150,7 @@ public class ArvoreAVL extends Arvore {
     private void emOrdem(NoAVL no, List<Integer> saida) {
         if (no == null) return;
         emOrdem(no.esquerda, saida);
-        for (int i = 0; i < no.contagem; i++)
-            saida.add(no.valor);
+        saida.add(no.valor);
         emOrdem(no.direita, saida);
     }
 
@@ -191,8 +169,8 @@ public class ArvoreAVL extends Arvore {
     public boolean verificarPropriedades() {
         erroVerificacao = null;
         if (verificar(raiz, Long.MIN_VALUE, Long.MAX_VALUE) < 0) return false;
-        if (emOrdem().size() != quantidadeElementos) {
-            falha("Contador de elementos inconsistente com o percurso em ordem");
+        if (emOrdem().size() != quantidadeNos) {
+            falha("Contador de nós inconsistente com o percurso em ordem");
             return false;
         }
         return true;
@@ -202,8 +180,6 @@ public class ArvoreAVL extends Arvore {
         if (no == null) return 0;
         if (no.valor <= min || no.valor >= max)
             return falha("Ordem de BST violada no nó " + no.valor);
-        if (no.contagem < 1)
-            return falha("Nó " + no.valor + " com contagem inválida");
 
         int he = verificar(no.esquerda, min, no.valor);
         if (he < 0) return -1;
@@ -228,6 +204,5 @@ public class ArvoreAVL extends Arvore {
     public void limpar() {
         raiz = null;
         quantidadeNos = 0;
-        quantidadeElementos = 0;
     }
 }
