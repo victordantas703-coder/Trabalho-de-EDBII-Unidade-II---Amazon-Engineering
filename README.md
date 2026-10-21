@@ -106,8 +106,7 @@ git clone https://github.com/victordantas703-coder/Trabalho-de-EDBII-Unidade-II-
 # 2) entrar na pasta do projeto
 cd Trabalho-de-EDBII-Unidade-II---Amazon-Engineering
 
-# 3) compilar (cria a pasta "bin" com os .class)
-mkdir -p bin
+# 3) compilar projeto
 javac -encoding UTF-8 -d bin -sourcepath src/main src/main/SystemView.java
 
 # 4) executar o menu
