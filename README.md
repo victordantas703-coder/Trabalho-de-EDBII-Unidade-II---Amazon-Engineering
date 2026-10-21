@@ -38,23 +38,23 @@ Observações sobre o terminal:
 
 ## Estrutura dos arquivos
 
-```mermaid
-treeView-beta
-            src/
-                main/ 
-                    SystemView.java 
-                    Visualizador.java
-                    no/ 
-                        No.java
-                        NoAVL.java
-                        NoRN.java
-                    arvores/ 
-                        Arvore.java
-                        Renderizador.java
-                        ArvoreAVL.java
-                        ArvoreRubroNegra.java
-                README.md
-
+```
+pasta-projeto/
+├── main/
+│   ├── SystemView.java
+│   ├── Visualizador.java
+│   ├── no/
+│   │   ├── No.java
+│   │   ├── NoAVL.java
+│   │   └── NoRN.java
+│   └── arvores/
+│       ├── Arvore.java
+│       ├── Renderizador.java
+│       ├── ArvoreAVL.java
+│       └── ArvoreRubroNegra.java
+├── bin/                        (criada pela compilação)
+├── README.md
+└── sistema-arvores.jar
 ```
 
 | Arquivo | O que desempenha |
